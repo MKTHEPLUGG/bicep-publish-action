@@ -1,0 +1,38 @@
+name: 'Publish Bicep Module to Azure'
+description: 'Publishes a specified Bicep module to an Azure container registry'
+
+inputs:
+  azureClientId:
+    description: 'Azure Client ID'
+    required: true
+  azureTenantId:
+    description: 'Azure Tenant ID'
+    required: true
+  azureSubscriptionId:
+    description: 'Azure Subscription ID'
+    required: true
+  registryName:
+    description: 'Azure Container Registry Name'
+    default: 'eruza123'
+  moduleName:
+    description: 'Bicep Module Path'
+    required: true
+  moduleTag:
+    description: 'Bicep Module Tag'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout Step
+      uses: actions/checkout@v3
+    - name: Azure Login
+      uses: Azure/login@v1.4.6
+      with:
+        client-id: ${{ inputs.azureClientId }}
+        tenant-id: ${{ inputs.azureTenantId }}
+        subscription-id: ${{ inputs.azureSubscriptionId }}
+    - run: |
+        az account show
+        az bicep publish --force --file ${{ inputs.moduleName }} --target br:${{ inputs.registryName }}.azurecr.io/bicep/modules/network:v${{ inputs.moduleTag }}
+      shell: bash
