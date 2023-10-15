@@ -20,6 +20,9 @@ inputs:
   moduleTag:
     description: 'Bicep Module Tag'
     required: true
+  module:
+    description: 'Bicep Module Name'
+    required: true
 
 runs:
   using: 'composite'
@@ -34,5 +37,5 @@ runs:
         subscription-id: ${{ inputs.azureSubscriptionId }}
     - run: |
         az account show
-        az bicep publish --force --file ${{ inputs.moduleName }} --target br:${{ inputs.registryName }}.azurecr.io/bicep/modules/network:v${{ inputs.moduleTag }}
+        az bicep publish --force --file ${{ inputs.moduleName }} --target br:${{ inputs.registryName }}.azurecr.io/bicep/modules/${{ inputs.module }}:v${{ inputs.moduleTag }}
       shell: bash
